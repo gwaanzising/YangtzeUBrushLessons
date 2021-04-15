@@ -1,0 +1,59 @@
+// ==UserScript==
+// @name         New Userscript
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        http://mooc1.chaoxing.com/mycourse/studentstudy*
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+
+    var videoNum=0
+
+setInterval(function() {
+	//子页面对象
+	var childOne=document.getElementsByTagName('iframe')[0].contentDocument;
+	// 下一页按钮对象
+	var nextButton=document.getElementsByClassName('orientationright ')[0];
+	//判断是否拥有第二个子页面对象
+	if(!childOne.querySelector('iframe')){
+		// 没有下一页
+		nextButton.click();
+	}
+	var childTwo=childOne.getElementsByTagName('iframe')[videoNum].contentDocument;
+	// 判断是否播放器
+	if(!childTwo.querySelector('video')){
+		// 没有下一页
+		nextButton.click();
+	}
+	// 当前视频进度条
+	var now=childTwo.getElementsByClassName('vjs-progress-holder vjs-slider vjs-slider-horizontal')[0].ariaValueNow;
+	console.log("当前进度" + now + "%");
+	// 播放完毕
+	if(now==100){
+		videoNum++;
+		console.log("第"+videoNum+"个视频结束，自动下一个视频");
+		//if(videoNum==childOne.getElementsByTagName('iframe')["length"]){
+			//所有视频播放完毕，下一页
+		//	videoNum=0;
+		//	nextButton.click();
+		//}
+        videoNum=0;
+		nextButton.click();
+	}
+	// 获取播放器状态
+	var video = childTwo.getElementsByTagName('video')[0];
+	if(video.paused){
+		// 如果播放器暂停了，那么播放视频
+		video.muted =true;
+		video.playbackRate=15
+		video.play();
+	}
+},5000);
+
+
+
+})();
